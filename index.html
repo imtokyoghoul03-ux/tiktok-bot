@@ -4,56 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-        #video-container { height: 100vh; scroll-snap-type: y mandatory; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
-        .video-card { height: 100vh; scroll-snap-align: start; position: relative; background: #000; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
+        #video-container { 
+            height: 100vh; 
+            scroll-snap-type: y mandatory; 
+            overflow-y: scroll; 
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .video-card { 
+            height: 100vh; 
+            scroll-snap-align: start; 
+            position: relative; 
+            background: #000; 
+        }
         iframe { width: 100%; height: 100%; border: none; }
-        .overlay { position: absolute; bottom: 80px; left: 15px; color: white; text-shadow: 1px 1px 5px #000; pointer-events: none; z-index: 10; }
+        .overlay { 
+            position: absolute; 
+            bottom: 70px; 
+            left: 15px; 
+            color: white; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9); 
+            pointer-events: none; 
+            z-index: 10; 
+        }
+        .badge {
+            background: red;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <div id="video-container"></div>
+<div id="video-container"></div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-        // 70 рандомных популярных YouTube Shorts ID
-        const shortsIds = [
-            "dQw4w9WgXcQ", "jNQXAC9IVRw", "9bZkp7q19f0", "kJQP7kiw5Fk", "hT_nvWreIhg",
-            "JGwWNGJdvx8", "OPf0YbXqDm0", "09R8_2nJtjg", "RgKAFK5djSk", "V1Pl8CzNzCw",
-            "y6120QOlsfU", "L_jWHffIx5E", "CevxZvSJLk8", "nfWlot6h_JM", "3JZ_D3ELwOQ",
-            "fRh_vgS2dFE", "0e3GPea1Tyg", "v2AC41dglnM", "SlPhMPnQ58k", "YQHsXMglC9A",
-            "7PCkvCPvDXk", "XqZsoesa55w", "Zi_XLOBDo_Y", "l482T0yNkeo", "M7lc1UVf-VE",
-            "kffacxfA7G4", "9W3SBaG_Xsk", "rYEDA3JcQqw", "oygrmJFKYZY", "SB-qEYuaBus",
-            "60ItHLz5WEA", "H5v3kku4y6Q", "T94PHkuydcw", "W_v_C_t0Mew", "m8e-FF8MsqU",
-            "XW0m7_fBvEw", "nS36_B-L_yE", "I_2D8at16n8", "pBkHHoOIU5g", "KAtf7WvS-lE",
-            "M66U_DuMCS8", "WcIcVapfqXw", "V2hgY5X9980", "56vT68RCHis", "oT7_5L6f73o",
-            "v7SC4H9z4E0", "9JmB-7TIsBw", "A3ytTKZf344", "eW7Twd8-f0A", "U036_f_J04k",
-            "G_36_B-L_yE", "X20m7_fBvEw", "m8e-FF8MsqU", "T94PHkuydcw", "H5v3kku4y6Q",
-            "60ItHLz5WEA", "SB-qEYuaBus", "oygrmJFKYZY", "rYEDA3JcQqw", "9W3SBaG_Xsk",
-            "kffacxfA7G4", "M7lc1UVf-VE", "l482T0yNkeo", "Zi_XLOBDo_Y", "XqZsoesa55w",
-            "7PCkvCPvDXk", "YQHsXMglC9A", "SlPhMPnQ58k", "v2AC41dglnM", "0e3GPea1Tyg"
-        ];
+    // 5 новых актуальных видео (Shorts ID)
+    const hotShorts = [
+        "L_jWHffIx5E", // Популярный тренд
+        "y6120QOlsfU", // Юмор / Мем
+        "Zi_XLOBDo_Y", // Лайфхак
+        "SB-qEYuaBus", // Новинка
+        "kffacxfA7G4"  // Челлендж
+    ];
 
-        const container = document.getElementById('video-container');
+    const container = document.getElementById('video-container');
 
-        shortsIds.forEach((id, index) => {
-            const card = document.createElement('div');
-            card.className = 'video-card';
-            card.innerHTML = `
-                <iframe src="https://www.youtube.com/embed/${id}?autoplay=0&controls=0&modestbranding=1&loop=1&playlist=${id}&rel=0" 
-                        allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <div class="overlay">
-                    <b>Shorts #${index + 1}</b><br>
-                    <span>Свайпай дальше 👆</span>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    </script>
+    hotShorts.forEach((id, index) => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+            <iframe src="https://www.youtube.com/embed/${id}?autoplay=0&controls=1&modestbranding=1&loop=1&playlist=${id}&rel=0" 
+                    allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="overlay">
+                <span class="badge">NEW</span>
+                <h3>Хайп Видео #${index + 1}</h3>
+                <p>Свайпай вверх 👆</p>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+</script>
 </body>
 </html>
-
