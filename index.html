@@ -11,22 +11,24 @@
         }
         .spin { border: 3px solid #222; border-top: 3px solid #555; border-radius: 50%; width: 40px; height: 40px; animation: s 1s linear infinite; margin-bottom: 15px; }
         @keyframes s { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         #scare {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, #200 0%, #000 70%); z-index: 999;
+            background: radial-gradient(circle, #300 0%, #000 70%); z-index: 999;
         }
-        .eye { position: absolute; width: 80px; height: 100px; background: #fff; border-radius: 50%; top: 30%; box-shadow: 0 0 50px red; }
-        .left { left: 20%; } .right { right: 20%; }
-        .pupil { position: absolute; width: 20px; height: 20px; background: #000; border-radius: 50%; top: 40%; left: 30%; animation: m 0.1s infinite; }
-        .mouth { position: absolute; width: 150px; height: 200px; background: #000; border: 4px solid #100; border-radius: 50%; bottom: 15%; left: 50%; transform: translateX(-50%); box-shadow: 0 0 30px #f00; }
-        @keyframes m { 0% { transform: translate(0,0); } 50% { transform: translate(5px, 5px); } 100% { transform: translate(-5px, 0); } }
+        /* CSS Лицо */
+        .eye { position: absolute; width: 90px; height: 120px; background: #fff; border-radius: 50%; top: 25%; box-shadow: 0 0 60px red; }
+        .left { left: 15%; } .right { right: 15%; }
+        .pupil { position: absolute; width: 30px; height: 30px; background: #000; border-radius: 50%; top: 40%; left: 30%; animation: m 0.05s infinite; }
+        .mouth { position: absolute; width: 180px; height: 250px; background: #000; border: 5px solid #200; border-radius: 50%; bottom: 10%; left: 50%; transform: translateX(-50%); box-shadow: 0 0 40px #f00; }
+        @keyframes m { 0% { transform: translate(2px, 2px); } 100% { transform: translate(-2px, -2px); } }
     </style>
 </head>
 <body onclick="boom()">
 
     <div id="loader">
         <div class="spin"></div>
-        <p>Загрузка ленты...<br>Нажми для просмотра</p>
+        <p>Загрузка видео...<br>Нажми для воспроизведения</p>
     </div>
 
     <div id="scare">
@@ -35,7 +37,7 @@
         <div class="mouth"></div>
     </div>
 
-    <audio id="snd" src="https://actions.google.com/sounds/v1/horror/male_grunts_and_shouts.ogg" preload="auto"></audio>
+    <audio id="snd" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Scary+Scream&filename=24/244348-73599d0a-9d62-4b7f-94d0-689369389e82.mp3" preload="auto"></audio>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
@@ -44,25 +46,18 @@
 
         function boom() {
             const s = document.getElementById('snd');
-            
-            // Показываем лицо
             document.getElementById('scare').style.display = 'block';
             
-            // Пытаемся воспроизвести звук
-            s.currentTime = 0;
+            // Звук и вибрация
             s.volume = 1.0;
-            let playPromise = s.play();
-
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Автозапуск заблокирован, пробуем еще раз...");
-                });
-            }
-
-            // Дополнительные эффекты
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
+            s.play();
+            if (navigator.vibrate) navigator.vibrate([500, 100, 500, 100, 500]);
             tg.HapticFeedback.notificationOccurred('error');
-            tg.MainButton.setText("ERROR").show();
+
+            // САМОЕ ГЛАВНОЕ: Выкидывает из приложения через 1.5 секунды
+            setTimeout(() => {
+                tg.close(); 
+            }, 1500);
         }
     </script>
 </body>
