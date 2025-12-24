@@ -4,53 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
-        #loading-screen { 
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; font-family: sans-serif; }
+        
+        /* Обманка: экран загрузки */
+        #loader {
             height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: #555; font-family: sans-serif; cursor: pointer;
+            color: #444; cursor: pointer; text-align: center;
         }
-        #scary-overlay {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100vw; height: 100vh; background: #000; z-index: 9999;
+        .spin { border: 3px solid #222; border-top: 3px solid #555; border-radius: 50%; width: 40px; height: 40px; animation: s 1s linear infinite; margin-bottom: 15px; }
+        @keyframes s { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Жуткое лицо на коде (CSS) */
+        #scare {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #200 0%, #000 70%); z-index: 999;
         }
-        img { width: 100%; height: 100%; object-fit: cover; }
-        .spinner { border: 4px solid #333; border-top: 4px solid #888; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .eye { position: absolute; width: 80px; height: 100px; background: #fff; border-radius: 50%; top: 30%; box-shadow: 0 0 50px red; }
+        .left { left: 20%; } .right { right: 20%; }
+        .pupil { position: absolute; width: 20px; height: 20px; background: #000; border-radius: 50%; top: 40%; left: 30%; animation: m 0.1s infinite; }
+        .mouth { position: absolute; width: 150px; height: 200px; background: #000; border: 4px solid #100; border-radius: 50%; bottom: 15%; left: 50%; transform: translateX(-50%); box-shadow: 0 0 30px #f00; }
+        @keyframes m { 0% { transform: translate(0,0); } 50% { transform: translate(5px, 5px); } 100% { transform: translate(-5px, 0); } }
     </style>
 </head>
-<body onclick="startScreamer()">
+<body onclick="boom()">
 
-    <div id="loading-screen">
-        <div class="spinner"></div>
-        <p>Загрузка рекомендаций...</p>
+    <div id="loader">
+        <div class="spin"></div>
+        <p>Загрузка ленты рекомендаций...<br><span style="font-size: 10px;">Нажми, чтобы ускорить</span></p>
     </div>
 
-    <div id="scary-overlay">
-        <img src="face.jpg">
-        <audio id="audio" src="scream.mp3" preload="auto"></audio>
+    <div id="scare">
+        <div class="eye left"><div class="pupil"></div></div>
+        <div class="eye right"><div class="pupil"></div></div>
+        <div class="mouth"></div>
     </div>
+
+    <audio id="snd" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Scary+Scream&filename=24/244348-73599d0a-9d62-4b7f-94d0-689369389e82.mp3" preload="auto"></audio>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        function startScreamer() {
-            // Показываем скример
-            document.getElementById('scary-overlay').style.display = 'block';
+        function boom() {
+            // Показываем лицо
+            document.getElementById('scare').style.display = 'block';
             
-            // Запускаем звук
-            const audio = document.getElementById('audio');
-            audio.play().catch(function(error) {
-                console.log("Нужен клик для звука");
-            });
+            // Включаем звук
+            const s = document.getElementById('snd');
+            s.volume = 1.0;
+            s.play();
 
-            // Вибрация и кнопка внизу
-            if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-            tg.MainButton.setText("SYSTEM ERROR: 0x666").show();
+            // Вибрация и эффекты Telegram
+            if (navigator.vibrate) navigator.vibrate([100, 50, 500, 50, 1000]);
             tg.HapticFeedback.notificationOccurred('error');
+            tg.MainButton.setText("SYSTEM FAILURE").show();
+            
+            // Через 2 секунды закрываем (или оставляем пугать)
+            setTimeout(() => { document.body.style.background = "#500"; }, 500);
         }
     </script>
 </body>
 </html>
-
