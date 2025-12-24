@@ -3,75 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TikTok Feed</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
-        #video-container { 
-            height: 100vh; 
-            scroll-snap-type: y mandatory; 
-            overflow-y: scroll; 
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+        
+        /* Начальный экран (обманка) */
+        #fake-content {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-family: sans-serif;
+            cursor: pointer;
         }
-        .video-card { 
-            height: 100vh; 
-            scroll-snap-align: start; 
-            position: relative; 
-            background: #000; 
+
+        /* Контейнер скримера (скрыт до клика) */
+        #screamer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 9999;
         }
-        iframe { width: 100%; height: 100%; border: none; }
-        .overlay { 
-            position: absolute; 
-            bottom: 70px; 
-            left: 15px; 
-            color: white; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.9); 
-            pointer-events: none; 
-            z-index: 10; 
-        }
-        .badge {
-            background: red;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            text-transform: uppercase;
-            font-weight: bold;
+
+        #screamer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Лицо на весь экран */
         }
     </style>
 </head>
-<body>
+<body onclick="activateScreamer()">
 
-<div id="video-container"></div>
+    <div id="fake-content">
+        <h2 id="status">Загрузка рекомендаций...</h2>
+    </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+    <div id="screamer">
+        <img src="https://i.imgur.com/8mXUvQo.jpeg" alt="SCARY">
+        <audio id="scream-sound" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Scary+Scream&filename=24/244348-73599d0a-9d62-4b7f-94d0-689369389e82.mp3" preload="auto"></audio>
+    </div>
 
-    // 5 новых актуальных видео (Shorts ID)
-    const hotShorts = [
-        "L_jWHffIx5E", // Популярный тренд
-        "y6120QOlsfU", // Юмор / Мем
-        "Zi_XLOBDo_Y", // Лайфхак
-        "SB-qEYuaBus", // Новинка
-        "kffacxfA7G4"  // Челлендж
-    ];
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-    const container = document.getElementById('video-container');
+        function activateScreamer() {
+            const screamerDiv = document.getElementById('screamer');
+            const sound = document.getElementById('scream-sound');
+            
+            // Показываем картинку
+            screamerDiv.style.display = 'block';
+            
+            // Включаем звук на полную
+            sound.volume = 1.0;
+            sound.play();
 
-    hotShorts.forEach((id, index) => {
-        const card = document.createElement('div');
-        card.className = 'video-card';
-        card.innerHTML = `
-            <iframe src="https://www.youtube.com/embed/${id}?autoplay=0&controls=1&modestbranding=1&loop=1&playlist=${id}&rel=0" 
-                    allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <div class="overlay">
-                <span class="badge">NEW</span>
-                <h3>Хайп Видео #${index + 1}</h3>
-                <p>Свайпай вверх 👆</p>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-</script>
+            // Вибрация телефона (если поддерживается)
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate([500, 110, 500, 110, 450, 110, 200, 110, 700, 110]);
+            }
+
+            // Запрещаем закрывать сразу
+            tg.MainButton.setText("ПОМОГИТЕ").show();
+        }
+    </script>
 </body>
 </html>
