@@ -4,65 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-        #video-container { 
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
+        #feed { 
             height: 100vh; 
             scroll-snap-type: y mandatory; 
             overflow-y: scroll; 
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
-        .video-card { 
+        .video-box { 
             height: 100vh; 
             scroll-snap-align: start; 
             position: relative; 
             background: #000; 
+            display: flex;
+            align-items: center;
         }
-        iframe { width: 100%; height: 100%; border: none; pointer-events: auto; }
-        .overlay { 
-            position: absolute; bottom: 80px; left: 15px; color: white; 
-            text-shadow: 1px 1px 5px #000; pointer-events: none; z-index: 10; 
+        iframe { width: 100%; height: 100%; border: none; }
+        .info { 
+            position: absolute; bottom: 90px; left: 15px; color: white; 
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.8); pointer-events: none; z-index: 5; 
         }
     </style>
 </head>
 <body>
 
-<div id="video-container"></div>
+<div id="feed"></div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Список из 200 ID популярных видео (я добавил основные, они будут повторяться в разном порядке)
-    const baseIds = [
-        "L_jWHffIx5E", "y6120QOlsfU", "Zi_XLOBDo_Y", "SB-qEYuaBus", "kffacxfA7G4",
-        "dQw4w9WgXcQ", "jNQXAC9IVRw", "9bZkp7q19f0", "kJQP7kiw5Fk", "hT_nvWreIhg",
-        "OPf0YbXqDm0", "09R8_2nJtjg", "RgKAFK5djSk", "V1Pl8CzNzCw", "M7lc1UVf-VE",
-        "nfWlot6h_JM", "3JZ_D3ELwOQ", "fRh_vgS2dFE", "0e3GPea1Tyg", "v2AC41dglnM"
+    // Список рабочих ID популярных видео (Shorts)
+    const workingIds = [
+        "nfy8t-C-PR4", "kxsB3NTX100", "-l2-MgEn8n4", "sxcnhrbxeyM", 
+        "L_jWHffIx5E", "y6120QOlsfU", "Zi_XLOBDo_Y", "SB-qEYuaBus",
+        "kffacxfA7G4", "9bZkp7q19f0", "kJQP7kiw5Fk", "hT_nvWreIhg"
     ];
 
-    // Генерируем список на 200 позиций, перемешивая базу
-    const allVideos = [];
+    // Создаем массив на 200 видео, перемешивая базу
+    const finalPlaylist = [];
     for (let i = 0; i < 200; i++) {
-        allVideos.push(baseIds[Math.floor(Math.random() * baseIds.length)]);
+        const randomId = workingIds[Math.floor(Math.random() * workingIds.length)];
+        finalPlaylist.push(randomId);
     }
 
-    const container = document.getElementById('video-container');
+    const feed = document.getElementById('feed');
 
-    // Создаем карточки видео
-    allVideos.forEach((id, index) => {
+    finalPlaylist.forEach((id, i) => {
         const card = document.createElement('div');
-        card.className = 'video-card';
+        card.className = 'video-box';
         card.innerHTML = `
-            <iframe src="https://www.youtube.com/embed/${id}?autoplay=0&controls=0&modestbranding=1&loop=1&playlist=${id}&rel=0" 
+            <iframe src="https://www.youtube.com/embed/${id}?autoplay=0&controls=0&modestbranding=1&loop=1&playlist=${id}&rel=0&iv_load_policy=3" 
                     allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <div class="overlay">
-                <b>Рекомендация #${index + 1}</b><br>
-                <span>Свайпай вверх 👆</span>
+            <div class="info">
+                <strong>@рекомендация</strong>
+                <p>Видео ${i + 1} из 200 🔥</p>
             </div>
         `;
-        container.appendChild(card);
+        feed.appendChild(card);
     });
 </script>
 </body>
