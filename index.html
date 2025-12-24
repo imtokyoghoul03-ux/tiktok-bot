@@ -6,9 +6,9 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
         #video-container { height: 100vh; scroll-snap-type: y mandatory; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
-        .video-card { height: 100vh; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .overlay { position: absolute; bottom: 50px; left: 15px; color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); pointer-events: none; }
+        .video-card { height: 100vh; scroll-snap-align: start; position: relative; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .overlay { position: absolute; bottom: 60px; left: 15px; color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); pointer-events: none; z-index: 10; }
     </style>
 </head>
 <body>
@@ -20,51 +20,37 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Мой подбор ссылок для твоей ленты
-        const videoSources = [
-            "https://www.w3schools.com/html/mov_bbb.mp4",
-            "https://www.w3schools.com/html/movie.mp4",
-            "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-            "https://v1.buzzvid.info/video/1.mp4",
-            "https://v1.buzzvid.info/video/2.mp4",
-            "https://v1.buzzvid.info/video/3.mp4",
-            "https://v1.buzzvid.info/video/4.mp4",
-            "https://v1.buzzvid.info/video/5.mp4",
-            "https://static.videezy.com/system/resources/previews/000/007/312/original/air_bubbles_4k_2.mp4",
-            "https://static.videezy.com/system/resources/previews/000/041/559/original/D_15_A.mp4"
+        // Список ID видео из YouTube (10 штук)
+        const youtubeIds = [
+            "jNQXAC9IVRw", // Me at the zoo
+            "9bZkp7q19f0", // PSY - GANGNAM STYLE
+            "dQw4w9WgXcQ", // Rick Astley
+            "kJQP7kiw5Fk", // Despacito
+            "hT_nvWreIhg", // One Dance
+            "JGwWNGJdvx8", // Shape of You
+            "OPf0YbXqDm0", // Uptown Funk
+            "09R8_2nJtjg", // Sugar
+            "RgKAFK5djSk", // See You Again
+            "V1Pl8CzNzCw"  // Billie Eilish
         ];
 
         const container = document.getElementById('video-container');
 
-        // Создаем карточки
-        videoSources.forEach((src, index) => {
+        youtubeIds.forEach((id, index) => {
             const card = document.createElement('div');
             card.className = 'video-card';
             card.innerHTML = `
-                <video src="${src}" loop playsinline ${index === 0 ? 'autoplay muted' : ''}></video>
-                <div class="overlay"><h3>Видео #${index + 1}</h3><p>Листай вниз 👇</p></div>
+                <iframe src="https://www.youtube.com/embed/${id}?autoplay=0&controls=0&modestbranding=1&loop=1&playlist=${id}" 
+                        allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div class="overlay">
+                    <h3>YouTube Video #${index + 1}</h3>
+                    <p>Свайпай вверх для следующего 👆</p>
+                </div>
             `;
             container.appendChild(card);
         });
-
-        const videos = document.querySelectorAll('video');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.play().catch(() => {});
-                } else {
-                    entry.target.pause();
-                }
-            });
-        }, { threshold: 0.6 });
-
-        videos.forEach(v => observer.observe(v));
-
-        // Включение звука по клику
-        window.addEventListener('click', () => {
-            videos.forEach(v => v.muted = false);
-        }, { once: true });
     </script>
 </body>
 </html>
+
 
