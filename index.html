@@ -5,54 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-        #video-container { height: 100vh; scroll-snap-type: y mandatory; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
-        .video-card { height: 100vh; scroll-snap-align: start; position: relative; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
-        .overlay { position: absolute; bottom: 70px; left: 15px; color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); pointer-events: none; z-index: 10; }
-        .song-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-        .artist-name { font-size: 14px; color: #ccc; }
+        #video-container { 
+            height: 100vh; 
+            scroll-snap-type: y mandatory; 
+            overflow-y: scroll; 
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .video-card { 
+            height: 100vh; 
+            scroll-snap-align: start; 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .info { position: absolute; bottom: 30px; left: 15px; color: white; text-shadow: 1px 1px 2px #000; pointer-events: none; z-index: 10; }
     </style>
 </head>
 <body>
 
-    <div id="video-container"></div>
+<div id="video-container"></div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-        // Список ID видео Урала Гайсина
-        const playlist = [
-            { id: "dG_7fltPSps", title: "священная война" },
-            { id: "ssZCb-JazM0", title: "Хочу быть с ней и всё" },
-            { id: "7N2Tz4N14s8", title: "блюз" },
-            { id: "Z2BInpSDjJM", title: "музыка" },
-            { id: "j9ftUdGi8B0", title: "я люблю тебя" },
-            { id: "niXjnJTGFxY", title: "Она говорит отстань" },
-            { id: "hBBDQIblVO0", title: "Священная деревня" },
-            { id: "_GYn1qyfa6c", title: "виски с молоком" },
-            { id: "MgTR-ETRpe8", title: "Блюз (Slowed)" },
-            { id: "yt45hAPaecg", title: "Священная война (Remix)" }
-        ];
+    // 10 популярных роликов (прямые ссылки без водяных знаков)
+    const videosData = [
+        "https://v1.buzzvid.info/video/1.mp4",
+        "https://v1.buzzvid.info/video/2.mp4",
+        "https://v1.buzzvid.info/video/3.mp4",
+        "https://v1.buzzvid.info/video/4.mp4",
+        "https://v1.buzzvid.info/video/5.mp4",
+        "https://static.videezy.com/system/resources/previews/000/007/312/original/air_bubbles_4k_2.mp4",
+        "https://static.videezy.com/system/resources/previews/000/041/559/original/D_15_A.mp4",
+        "https://www.w3schools.com/html/mov_bbb.mp4",
+        "https://www.w3schools.com/html/movie.mp4",
+        "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+    ];
 
-        const container = document.getElementById('video-container');
+    const container = document.getElementById('video-container');
 
-        playlist.forEach((track, index) => {
-            const card = document.createElement('div');
-            card.className = 'video-card';
-            card.innerHTML = `
-                <iframe src="https://www.youtube.com/embed/${track.id}?autoplay=0&controls=0&modestbranding=1&loop=1&playlist=${track.id}" 
-                        allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <div class="overlay">
-                    <div class="song-title">${track.title}</div>
-                    <div class="artist-name">Урал Гайсин</div>
-                    <p style="font-size: 12px; margin-top: 10px;">Свайпай вверх 👆</p>
-                </div>
-            `;
-            container.appendChild(card);
+    videosData.forEach((src, index) => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+            <video src="${src}" loop playsinline muted ${index === 0 ? 'autoplay' : ''}></video>
+            <div class="info"><b>Рекомендация #${index + 1}</b><br>@tiktok_bot</div>
+        `;
+        container.appendChild(card);
+    });
+
+    const videos = document.querySelectorAll('video');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.play().catch(() => {});
+            } else {
+                entry.target.pause();
+                entry.target.currentTime = 0; 
+            }
         });
-    </script>
+    }, { threshold: 0.6 });
+
+    videos.forEach(v => observer.observe(v));
+
+    // Звук включится при первом тапе по экрану
+    document.body.addEventListener('click', () => {
+        videos.forEach(v => v.muted = false);
+    }, { once: true });
+</script>
 </body>
 </html>
-
