@@ -8,7 +8,9 @@
         #video-container { height: 100vh; scroll-snap-type: y mandatory; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
         .video-card { height: 100vh; scroll-snap-align: start; position: relative; background: #000; }
         iframe { width: 100%; height: 100%; border: none; }
-        .overlay { position: absolute; bottom: 60px; left: 15px; color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); pointer-events: none; z-index: 10; }
+        .overlay { position: absolute; bottom: 70px; left: 15px; color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); pointer-events: none; z-index: 10; }
+        .song-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .artist-name { font-size: 14px; color: #ccc; }
     </style>
 </head>
 <body>
@@ -20,31 +22,32 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Список ID видео из YouTube (10 штук)
-        const youtubeIds = [
-            "jNQXAC9IVRw", // Me at the zoo
-            "9bZkp7q19f0", // PSY - GANGNAM STYLE
-            "dQw4w9WgXcQ", // Rick Astley
-            "kJQP7kiw5Fk", // Despacito
-            "hT_nvWreIhg", // One Dance
-            "JGwWNGJdvx8", // Shape of You
-            "OPf0YbXqDm0", // Uptown Funk
-            "09R8_2nJtjg", // Sugar
-            "RgKAFK5djSk", // See You Again
-            "V1Pl8CzNzCw"  // Billie Eilish
+        // Список ID видео Урала Гайсина
+        const playlist = [
+            { id: "dG_7fltPSps", title: "священная война" },
+            { id: "ssZCb-JazM0", title: "Хочу быть с ней и всё" },
+            { id: "7N2Tz4N14s8", title: "блюз" },
+            { id: "Z2BInpSDjJM", title: "музыка" },
+            { id: "j9ftUdGi8B0", title: "я люблю тебя" },
+            { id: "niXjnJTGFxY", title: "Она говорит отстань" },
+            { id: "hBBDQIblVO0", title: "Священная деревня" },
+            { id: "_GYn1qyfa6c", title: "виски с молоком" },
+            { id: "MgTR-ETRpe8", title: "Блюз (Slowed)" },
+            { id: "yt45hAPaecg", title: "Священная война (Remix)" }
         ];
 
         const container = document.getElementById('video-container');
 
-        youtubeIds.forEach((id, index) => {
+        playlist.forEach((track, index) => {
             const card = document.createElement('div');
             card.className = 'video-card';
             card.innerHTML = `
-                <iframe src="https://www.youtube.com/embed/${id}?autoplay=0&controls=0&modestbranding=1&loop=1&playlist=${id}" 
+                <iframe src="https://www.youtube.com/embed/${track.id}?autoplay=0&controls=0&modestbranding=1&loop=1&playlist=${track.id}" 
                         allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 <div class="overlay">
-                    <h3>YouTube Video #${index + 1}</h3>
-                    <p>Свайпай вверх для следующего 👆</p>
+                    <div class="song-title">${track.title}</div>
+                    <div class="artist-name">Урал Гайсин</div>
+                    <p style="font-size: 12px; margin-top: 10px;">Свайпай вверх 👆</p>
                 </div>
             `;
             container.appendChild(card);
@@ -52,5 +55,4 @@
     </script>
 </body>
 </html>
-
 
